@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://fonts.xz.style/serve/inter.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@exampledev/new.css@1.1.2/new.min.css"
+    />
+    <style>
+      @import url("https://fonts.xz.style/serve/fira-code.css");
+      :root {
+        --nc-font-sans: "Fira Code", monospace;
+        --nc-font-mono: "Fira Code", monospace;
+        --nc-tx-1: #ffffff;
+        --nc-tx-2: #eeeeee;
+        --nc-bg-1: #000000;
+        --nc-bg-2: #002700;
+        --nc-bg-3: #005800;
+        --nc-lk-1: #00ff00;
+        --nc-lk-2: #00c200;
+        --nc-lk-tx: #000000;
+        --nc-ac-1: #00ff00;
+        --nc-ac-tx: #000000;
+      }
+    </style>
+    <title>Document</title>
+  </head>
+  <body>
+    <table class="tg">
+      <thead>
+        <tr>
+          <th>日付</th>
+          <th>六曜</th>
+          <th>タイムライン</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/locale/ja.js"></script>
+    <script src="https://unpkg.com/moment-lunar@0.0.4/moment-lunar.min.js"></script>
+    <script>
+      const YO6 = [
+        {
+          id: "SENSHO",
+          name: "先勝",
+          timeline: [
+            { time: "00:00", luck: "吉" },
+            { time: "12:00", luck: "凶" },
+          ],
+        },
+        {
+          id: "TOMOBIKI",
+          name: "友引",
+          timeline: [
+            { time: "00:00", luck: "末吉" },
+            { time: "06:00", luck: "吉" },
+            { time: "10:00", luck: "凶" },
+            { time: "14:00", luck: "大吉" },
+            { time: "18:00", luck: "末吉" },
+          ],
+        },
+        {
+          id: "SAKIMAKE",
+          name: "先負",
+          timeline: [
+            { time: "00:00", luck: "凶" },
+            { time: "12:00", luck: "吉" },
+          ],
+        },
+        {
+          id: "BUTSUMETSU",
+          name: "仏滅",
+          timeline: [{ time: "00:00", luck: "凶" }],
+        },
+        {
+          id: "TAIAN",
+          name: "大安",
+          timeline: [{ time: "00:00", luck: "大吉" }],
+        },
+        {
+          id: "SHAKKU",
+          name: "赤口",
+          timeline: [
+            { time: "00:00", luck: "凶" },
+            { time: "11:00", luck: "吉" },
+            { time: "13:00", luck: "凶" },
+          ],
+        },
+      ];
+      const get6yoByLunar = (mlunar) => {
+        return YO6[
+          ((mlunar.date() % 6) - 1 + ((mlunar.month() + 1) % 6) - 1) % 6
+        ];
+      };
+      const week = [...new Array(8).keys()].map((days) => {
+        const m = () => moment().add({ days });
+        return { ...get6yoByLunar(m().lunar()), date: m().format("M/DD dd") };
+      });
+      document.querySelector("tbody").innerHTML = week
+        .map(
+          ({ date, name, timeline }) => `<tr>
+          <td width="80">${date}</td>
+          <td width="60">${name}</td>
+          <td>
+            <table>
+              ${timeline
+                .map(
+                  ({ time, luck }) => `<tr>
+                    <td width="60">${time}</td>
+                    <td>${luck}</td>
+                  </tr>`
+                )
+                .join("")}
+            </table>
+          </td>
+        </tr>`
+        )
+        .join("");
+    </script>
+  </body>
+</html>
